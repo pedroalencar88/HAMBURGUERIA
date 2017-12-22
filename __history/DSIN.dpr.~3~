@@ -1,0 +1,16 @@
+program DSIN;
+
+uses
+  Vcl.Forms,
+  LOGIN in 'LOGIN.pas' {FRMLONGIN},
+  PEDIDO in 'PEDIDO.pas' {FRMPEDIDO};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TFRMLONGIN, FRMLONGIN);
+  Application.CreateForm(TFRMPEDIDO, FRMPEDIDO);
+  Application.Run;
+end.

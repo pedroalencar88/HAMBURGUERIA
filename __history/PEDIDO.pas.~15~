@@ -1,0 +1,167 @@
+unit PEDIDO;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, FireDAC.Stan.Intf,
+  FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
+  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client, Vcl.ExtCtrls, Vcl.DBCtrls,
+  Vcl.Grids, Vcl.DBGrids, Vcl.StdCtrls, Vcl.Buttons;
+
+type
+  TFRMPEDIDO = class(TForm)
+    Label8: TLabel;
+    EDTCODPROD: TEdit;
+    EDTDESCPROD: TEdit;
+    BitBtn3: TBitBtn;
+    Label9: TLabel;
+    EDTQTDEPROD: TEdit;
+    Label10: TLabel;
+    EDTVRUNIT: TEdit;
+    Label11: TLabel;
+    EDTVRTOTAL: TEdit;
+    DBGrid1: TDBGrid;
+    QTEMPPROD: TFDMemTable;
+    QTEMPPRODcodigo_produto: TIntegerField;
+    QTEMPPRODdescricao: TStringField;
+    QTEMPPRODpreco: TFloatField;
+    QTEMPPRODqtde: TFloatField;
+    QTEMPPRODtotal: TFloatField;
+    DSTEMPPROD: TDataSource;
+    DBNavigator1: TDBNavigator;
+    BitBtn2: TBitBtn;
+    qproduto: TFDQuery;
+    dsproduto: TDataSource;
+    QBUSCAPRODUTO: TFDQuery;
+    dsbuscaproduto: TDataSource;
+    GRAVARITEM_VENDA: TFDQuery;
+    GRAVARVENDA: TFDQuery;
+    Label1: TLabel;
+    SpeedButton2: TSpeedButton;
+    qprodutoCOD_PRODUTO: TFDAutoIncField;
+    qprodutoDESC_PRODUTO: TWideStringField;
+    qprodutoPRECO: TBCDField;
+    QBUSCAPRODUTOCOD_PRODUTO: TFDAutoIncField;
+    QBUSCAPRODUTODESC_PRODUTO: TWideStringField;
+    QBUSCAPRODUTOPRECO: TBCDField;
+    procedure EDTCODPRODExit(Sender: TObject);
+    procedure SpeedButton2Click(Sender: TObject);
+    procedure EDTQTDEPRODExit(Sender: TObject);
+    procedure BitBtn2Click(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  FRMPEDIDO: TFRMPEDIDO;
+
+implementation
+
+{$R *.dfm}
+
+uses CLIENTE, LOGIN, PRINCIPAL, PRODUTO, DM, RELATORIO, TROCARSENHA;
+
+procedure TFRMPEDIDO.BitBtn2Click(Sender: TObject);
+VAR
+QTDEITEM : Integer;
+VALORTOTAL : Extended;
+CONT : Integer;
+begin
+  VALORTOTAL := 0;
+  CONT := 0;
+  QTDEITEM := QTEMPPROD.RecordCount;
+  GRAVARVENDA.ParamByName('CLIENTE').AsInteger     := UsuarioLogado;
+  if QTDEITEM > 1 then
+  begin
+    QTEMPPROD.First;
+    while NOT QTEMPPROD.EOF do
+    BEGIN
+      VALORTOTAL := VALORTOTAL + QTEMPPRODtotal.AsFloat;
+      QTEMPPROD.Next;
+    END;
+  end;
+
+
+  try
+    GRAVARVENDA.ExecSQL;
+    ShowMessage('REGISTRO SALVO COM SUCESSO!!');
+
+    if QTDEITEM > 1 then
+    BEGIN
+    QTEMPPROD.First;
+    CONT := 1;
+    while NOT QTEMPPROD.EOF do
+    BEGIN
+      GRAVARITEM_VENDA.ParamByName('NRITEM').AsInteger  := CONT;
+      GRAVARITEM_VENDA.ParamByName('PRODUTO').AsInteger := QTEMPPRODcodigo_produto.AsInteger;
+      GRAVARITEM_VENDA.ParamByName('QTDE').AsInteger    := QTEMPPRODqtde.AsInteger;
+      GRAVARITEM_VENDA.ExecSQL;
+      CONT := CONT + 1;
+      QTEMPPROD.Next;
+    END;
+
+
+
+    END
+    ELSE
+    BEGIN
+      GRAVARITEM_VENDA.ParamByName('NRITEM').AsInteger  := 1;
+      GRAVARITEM_VENDA.ParamByName('PRODUTO').AsInteger := QTEMPPRODcodigo_produto.AsInteger;
+      GRAVARITEM_VENDA.ParamByName('QTDE').AsInteger    := QTEMPPRODqtde.AsInteger;
+      GRAVARITEM_VENDA.ExecSQL;
+    END;
+
+
+
+  except
+  On E:Exception do
+    ShowMessage('Ocorreu um erro ao incluir a venda ' + E.Message);
+  end;
+
+end;
+
+procedure TFRMPEDIDO.EDTCODPRODExit(Sender: TObject);
+begin
+  QBUSCAPRODUTO.Close;
+  QBUSCAPRODUTO.ParamByName('COD_PRODUTO').AsString := EDTCODPROD.Text;
+  QBUSCAPRODUTO.Open;
+  if QBUSCAPRODUTO.IsEmpty then
+  BEGIN
+    ShowMessage('PRODUTO NÃO CADASTRADO');
+  END
+  ELSE
+  BEGIN
+    EDTDESCPROD.Text := QBUSCAPRODUTODESC_PRODUTO.AsString;
+    EDTVRUNIT.Text := QBUSCAPRODUTOpreco.AsString;
+  END;
+end;
+
+procedure TFRMPEDIDO.EDTQTDEPRODExit(Sender: TObject);
+var
+qtde : integer;
+begin
+  qtde := StrToInt(EDTQTDEPROD.Text);
+  EDTVRTOTAL.Text := IntToStr(qtde*QBUSCAPRODUTOpreco.AsInteger);
+end;
+
+procedure TFRMPEDIDO.SpeedButton2Click(Sender: TObject);
+begin
+    QTEMPPROD.Append;
+    QTEMPPRODcodigo_produto.AsInteger := QBUSCAPRODUTOcod_produto.AsInteger;
+    QTEMPPRODdescricao.AsString       := QBUSCAPRODUTODESC_PRODUTO.AsString;
+    QTEMPPRODqtde.AsInteger           := StrToInt(EDTQTDEPROD.Text);
+    QTEMPPRODpreco.AsFloat            := QBUSCAPRODUTOpreco.AsFloat;
+    QTEMPPRODtotal.AsFloat            := StrToFloat(EDTVRTOTAL.Text);
+    QTEMPPROD.Post;
+    EDTCODPROD.Clear;
+    EDTDESCPROD.Clear;
+    EDTVRUNIT.Clear;
+    EDTVRTOTAL.Clear;
+    EDTQTDEPROD.Clear;
+end;
+
+end.

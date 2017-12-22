@@ -1,0 +1,114 @@
+unit LOGIN;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, dxGDIPlusClasses, Vcl.ExtCtrls,
+  Vcl.StdCtrls, Vcl.Buttons, Vcl.Mask, FireDAC.Stan.Intf, FireDAC.Stan.Option,
+  FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
+  FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, Data.DB,
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client;
+
+type
+  TFRMLONGIN = class(TForm)
+    edtSenha: TEdit;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Image2: TImage;
+    btnAcessar: TSpeedButton;
+    Label4: TLabel;
+    Label5: TLabel;
+    btnNovoUser: TSpeedButton;
+    btnResetSenha: TSpeedButton;
+    edtCPF: TMaskEdit;
+    QVALIDACPF: TFDQuery;
+    QVALIDACPFCODIGO: TFDAutoIncField;
+    QVALIDACPFNOME: TWideStringField;
+    QVALIDACPFCPF: TWideStringField;
+    QVALIDACPFCEP: TWideStringField;
+    QVALIDACPFENDERECO: TWideStringField;
+    QVALIDACPFEMAIL: TWideStringField;
+    QVALIDACPFCELULAR: TWideStringField;
+    QVALIDACPFSENHA: TWideStringField;
+    procedure btnAcessarClick(Sender: TObject);
+    procedure lblPrimeiroAcessoClick(Sender: TObject);
+    procedure lblEsqueceuSenhaClick(Sender: TObject);
+    procedure lblEsqueceuSenhaLinkClick(Sender: TObject; const Link: string;
+      LinkType: TSysLinkType);
+    procedure edtCPFExit(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  FRMLONGIN: TFRMLONGIN;
+
+implementation
+
+{$R *.dfm}
+
+uses CLIENTE, PEDIDO, PRINCIPAL, PRODUTO, DM, RELATORIO;
+
+procedure TFRMLONGIN.btnAcessarClick(Sender: TObject);
+begin
+    if (edtCPF.Text = '   .   .   -  ') then
+    begin
+      ShowMessage('CPF não infomado');
+    end;
+
+  QVALIDACPF.Close;
+  QVALIDACPF.ParamByName('CPF').AsString := EDTCPF.Text;
+  QVALIDACPF.Open;
+  if QVALIDACPF.IsEmpty then
+  BEGIN
+    ShowMessage('CLIENTE NÃO CADASTRADO');
+  END
+
+end;
+
+procedprocedure TFRMLONGIN.btnNovoUserClick(Sender: TObject);
+begin
+
+end;
+
+ure TFRMLONGIN.edtCPFExit(Sender: TObject);
+begin
+    if (edtCPF.Text = '   .   .   -  ') then
+    begin
+      ShowMessage('CPF não infomado');
+      edtCPF.SetFocus;
+    end;
+
+end;
+
+procedure TFRMLONGIN.lblEsqueceuSenhaClick(Sender: TObject);
+begin
+    if (edtCPF.Text = '   .   .   -  ') then
+    begin
+      ShowMessage('CPF não infomado');
+    end;
+end;
+
+procedure TFRMLONGIN.lblEsqueceuSenhaLinkClick(Sender: TObject;
+  const Link: string; LinkType: TSysLinkType);
+begin
+    if (edtCPF.Text = '   .   .   -  ') then
+    begin
+      ShowMessage('CPF não infomado');
+    end;
+end;
+
+procedure TFRMLONGIN.lblPrimeiroAcessoClick(Sender: TObject);
+begin
+    if (edtCPF.Text = '   .   .   -  ') then
+    begin
+      ShowMessage('CPF não infomado');
+    end;
+
+end;
+
+end.

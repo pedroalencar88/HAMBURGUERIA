@@ -1,0 +1,24 @@
+program DSIN;
+
+uses
+  Vcl.Forms,
+  LOGIN in 'LOGIN.pas' {FRMLONGIN},
+  PEDIDO in 'PEDIDO.pas' {FRMPEDIDO},
+  CLIENTE in 'CLIENTE.pas' {Form1},
+  PRODUTO in 'PRODUTO.pas' {Form2},
+  PRINCIPAL in 'PRINCIPAL.pas' {Form3},
+  DM in 'DM.pas' {DM_: TDataModule};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TFRMLONGIN, FRMLONGIN);
+  Application.CreateForm(TFRMPEDIDO, FRMPEDIDO);
+  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TForm2, Form2);
+  Application.CreateForm(TForm3, Form3);
+  Application.CreateForm(TDM_, DM_);
+  Application.Run;
+end.

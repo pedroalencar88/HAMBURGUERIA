@@ -1,0 +1,30 @@
+program DSIN;
+
+uses
+  Vcl.Forms,
+  LOGIN in 'LOGIN.pas' {FRMLOGIN},
+  PEDIDO in 'PEDIDO.pas' {FRMPEDIDO},
+  CLIENTE in 'CLIENTE.pas' {FRMCLIENTE},
+  PRODUTO in 'PRODUTO.pas' {FRMPRODUTO},
+  PRINCIPAL in 'PRINCIPAL.pas' {FRMPRINICIPAL},
+  DM in 'DM.pas' {DM_: TDataModule},
+  RELATORIO in 'RELATORIO.pas' {FRMRELATORIO},
+  TROCARSENHA in 'TROCARSENHA.pas' {FRMTROCARSENHA},
+  CONSULTAPRODUTO in 'CONSULTAPRODUTO.pas' {FRMCONSULTAPRODUTO};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TFRMLOGIN, FRMLOGIN);
+  Application.CreateForm(TFRMPEDIDO, FRMPEDIDO);
+  Application.CreateForm(TFRMCLIENTE, FRMCLIENTE);
+  Application.CreateForm(TFRMPRODUTO, FRMPRODUTO);
+  Application.CreateForm(TFRMPRINICIPAL, FRMPRINICIPAL);
+  Application.CreateForm(TDM_, DM_);
+  Application.CreateForm(TFRMRELATORIO, FRMRELATORIO);
+  Application.CreateForm(TFRMTROCARSENHA, FRMTROCARSENHA);
+  Application.CreateForm(TFRMCONSULTAPRODUTO, FRMCONSULTAPRODUTO);
+  Application.Run;
+end.

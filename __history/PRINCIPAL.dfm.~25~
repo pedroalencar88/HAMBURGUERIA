@@ -1,0 +1,163 @@
+object FRMPRINICIPAL: TFRMPRINICIPAL
+  Left = 0
+  Top = 0
+  Caption = 'MENU PRINCIPAL'
+  ClientHeight = 336
+  ClientWidth = 329
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  OnClose = FormClose
+  OnShow = FormShow
+  PixelsPerInch = 96
+  TextHeight = 13
+  object BTNCOMPRA: TSpeedButton
+    Left = 7
+    Top = 256
+    Width = 105
+    Height = 57
+    Caption = 'REALIZAR COMPRA'
+    OnClick = BTNCOMPRAClick
+  end
+  object BTNPRODUTO: TSpeedButton
+    Left = 114
+    Top = 256
+    Width = 104
+    Height = 57
+    Caption = 'PRODUTO'
+    Visible = False
+    OnClick = BTNPRODUTOClick
+  end
+  object Label1: TLabel
+    Left = 8
+    Top = 8
+    Width = 123
+    Height = 16
+    Caption = #218'LTIMAS COMPRAS'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ParentFont = False
+  end
+  object BTNRELATORIOS: TSpeedButton
+    Left = 219
+    Top = 256
+    Width = 104
+    Height = 57
+    Caption = 'RELAT'#211'RIOS'
+    Visible = False
+    OnClick = BTNPRODUTOClick
+  end
+  object DBGrid1: TDBGrid
+    Left = 8
+    Top = 30
+    Width = 315
+    Height = 220
+    DataSource = DSULTIMASCOMPRAS
+    TabOrder = 0
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'Tahoma'
+    TitleFont.Style = []
+  end
+  object QULTIMASCOMPRAS: TFDQuery
+    Connection = DM_.FDCONEXAO
+    SQL.Strings = (
+      'SELECT'#9'PEDIDO.COD_PEDIDO, '
+      #9#9'PEDIDO.DATA,'
+      #9#9'PEDIDO.CLIENTE,'
+      #9#9'CLIENTE.NOME,'#9#9#9#9
+      #9#9'ITEM_PEDIDO.NRITEM,'
+      #9#9'ITEM_PEDIDO.PRODUTO,'
+      #9#9'PRODUTO.DESC_PRODUTO,'#9#9
+      #9#9'PRODUTO.PRECO,'
+      #9#9'ITEM_PEDIDO.QTDE,'
+      '                --PEDIDO.STATUS '#9
+      'CASE STATUS '
+      '  WHEN '#39'S'#39' THEN '#39'SOLICITADO'#39' '
+      '  WHEN '#39'P'#39' THEN '#39'PREPARA'#199#195'O'#39'  '
+      '  WHEN '#39'F'#39' THEN '#39'FINALIZADO'#39' '
+      'END as STATUS'
+      #9#9'FROM PEDIDO'
+      'LEFT JOIN ITEM_PEDIDO ON ITEM_PEDIDO.PEDIDO = PEDIDO.cod_PEDIDO'
+      'LEFT JOIN PRODUTO ON PRODUTO.cod_produto = ITEM_PEDIDO.produto'
+      'LEFT JOIN CLIENTE ON CLIENTE.CODIGO = PEDIDO.cliente'
+      'WHERE PEDIDO.CLIENTE = :CLIENTE'
+      'ORDER BY PEDIDO.cod_PEDIDO, ITEM_PEDIDO.nritem')
+    Left = 136
+    Top = 176
+    ParamData = <
+      item
+        Name = 'CLIENTE'
+        DataType = ftString
+        ParamType = ptInput
+        Value = Null
+      end>
+    object QULTIMASCOMPRASCOD_PEDIDO: TIntegerField
+      DisplayLabel = 'PEDIDO'
+      DisplayWidth = 8
+      FieldName = 'COD_PEDIDO'
+      Origin = 'COD_PEDIDO'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
+    object QULTIMASCOMPRASDATA: TDateField
+      DisplayWidth = 10
+      FieldName = 'DATA'
+      Origin = 'DATA'
+    end
+    object QULTIMASCOMPRASNRITEM: TIntegerField
+      DisplayLabel = 'ITEM'
+      DisplayWidth = 6
+      FieldName = 'NRITEM'
+      Origin = 'NRITEM'
+    end
+    object QULTIMASCOMPRASDESC_PRODUTO: TWideStringField
+      DisplayLabel = 'PRODUTO'
+      DisplayWidth = 18
+      FieldName = 'DESC_PRODUTO'
+      Origin = 'DESC_PRODUTO'
+      FixedChar = True
+      Size = 15
+    end
+    object QULTIMASCOMPRASSTATUS: TStringField
+      FieldName = 'STATUS'
+      Origin = 'STATUS'
+      ReadOnly = True
+      Size = 10
+    end
+  end
+  object DSULTIMASCOMPRAS: TDataSource
+    DataSet = QULTIMASCOMPRAS
+    Left = 248
+    Top = 176
+  end
+  object QTIPOUSUARIO: TFDQuery
+    Connection = DM_.FDCONEXAO
+    SQL.Strings = (
+      'SELECT TIPO FROM CLIENTE'
+      'WHERE CODIGO = :CODIGO AND TIPO <> '#39'C'#39)
+    Left = 184
+    Top = 96
+    ParamData = <
+      item
+        Name = 'CODIGO'
+        DataType = ftInteger
+        ParamType = ptInput
+        Value = Null
+      end>
+    object QTIPOUSUARIOTIPO: TStringField
+      FieldName = 'TIPO'
+      Origin = 'TIPO'
+      FixedChar = True
+      Size = 1
+    end
+  end
+end
